@@ -42,8 +42,19 @@ const tryCatchFinally = async () => {
     console.log('Fetch Success!');
   } catch(e) {
     console.log('Fetch Error!');
+  } finally {
+    console.log('blockUI.stop()');
   }
-  console.log('blockUI.stop()');
+};
+
+const tryDontCatchFinally = async() => {
+  console.log('blockUI.start() 2');
+  try {
+    const errorFetch = await apiFetchJson('http://something.not.real.blah');
+    console.log('Fetch Success!');
+  } finally {
+    console.log('blockUI.stop() 2');
+  }
 };
 
 // ** CAN'T DO THIS, CAUSES COMPILER ERROR
@@ -70,6 +81,14 @@ async function main() {
   // Example of then().catch().finally() flow using try/catch w/ finally after catch
   console.log('----- Running test 3 ------');
   const result = await tryCatchFinally();
+
+  // Example where the calling function doesn't catch error, but needs to call finally
+  // catch here instead
+  try {
+    const result2 = await tryDontCatchFinally();
+  } catch(e) {
+    console.log('handle error from tryDontCatchFinally', e);
+  }
 
   // Example where async function returns promise
   // Won't block or await here, running 3 will come before response handler
